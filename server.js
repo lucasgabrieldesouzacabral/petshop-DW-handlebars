@@ -1,7 +1,11 @@
 const express = require('express');
-const exphbs = require('express-handlebars');
-
 const app = express();
+const exphbs = require('express-handlebars');
+const bodyParser = require('body-parser');
+const Tarefa = require('./models/tarefa.model');
+const db = require('./config/database');
+
+
 const port = 3000;
 
 app.use(express.json());
@@ -12,7 +16,15 @@ app.engine('handlebars', exphbs.engine({
     helpers: {
         eq: (a, b) => a === b
     }}));
+
 app.set('view engine', 'handlebars');
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+db.sync({force: true}).then(() => {
+    console.log('Banco de dados sincronizado');
+});
+
 
 let tutores = [
     {id: 1, nome: "João Silva", telefone: "(11) 99999-1111", email: "joao@email.com"},

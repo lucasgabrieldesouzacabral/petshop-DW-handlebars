@@ -1,7 +1,7 @@
 {
   "name": "dev",
   "version": "1.0.0",
-  "description": "",
+  "description": "Grupo:\r Lucas Gabriel de Souza Cabral\r Isaac Pessoa Dias Gomes\r Lisandro Luan da Silva Chagas",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,7 +11,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^2.2.1",
     "express": "^5.1.0",
-    "express-handlebars": "^8.0.3"
-  }
+    "express-handlebars": "^8.0.3",
+    "sequelize": "^6.37.7",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasgabrieldesouzacabral/petshop-DW-handlebars.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lucasgabrieldesouzacabral/petshop-DW-handlebars/issues"
+  },
+  "homepage": "https://github.com/lucasgabrieldesouzacabral/petshop-DW-handlebars#readme"
 }
