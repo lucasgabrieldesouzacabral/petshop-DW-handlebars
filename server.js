@@ -56,7 +56,8 @@ app.get('/', (req, res) => {
     res.render('home');
 })
 
-
+//
+//listar tutores
 app.get('/tutores', async (req, res) => {
     try {
         let tutores = await Tutor.findAll();
@@ -159,7 +160,13 @@ app.get('/animais', async (req, res) => {
         let animais = await Animal.findAll({
             include: [{model: Tutor, as: 'Tutor'}]
         });
-        animais = animais.map(a => a.dataValues);
+        animais = animais.map(a => {
+            let animalData = a.dataValues;
+            return {
+                ...animalData,
+                tutorNome: animalData.Tutor ? animalData.Tutor.nome : 'Não informado'
+            };
+        });
         res.render('listarAnimais', {animais: animais});
     } catch (error) {
         console.log(error);
@@ -167,19 +174,19 @@ app.get('/animais', async (req, res) => {
     }
 });
 
-//cadastrar animal
+// formulário de cadastro de animal
 app.get('/animais/novo', async (req, res) => {
     try {
         let tutores = await Tutor.findAll();
         tutores = tutores.map(t => t.dataValues);
-        res.render('cadastrarAnimal', {tutores: tutoresData});
+        res.render('cadastrarAnimal', {tutores: tutores});
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao buscar tutores');
     }
 });
 
-//cadastrar animamisd
+//cadastrar animal
 app.post('/animais', async (req, res) => {
     try {
         await Animal.create({nome: req.body.nome, especie: req.body.especie, raca: req.body.raca,
@@ -194,49 +201,41 @@ app.post('/animais', async (req, res) => {
 //detalhar animal
 app.get('/animais/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const animal = await Animal.findByPk(id, {
+        let animal = await Animal.findByPk(req.params.id, {
             include: [{model: Tutor, as: 'Tutor'}]
         });
-        if (animal) {
-            const animalData = animal.dataValues;
-            res.render('detalharAnimal', {
-                animal: {
-                    ...animalData,
-                    tutorNome: animalData.Tutor ? animalData.Tutor.nome : 'Não informado'
-                }
-            });
-        } else {
-            res.status(404).send('Animal não encontrado');
-        }
+        let animalData = animal.dataValues;
+        res.render('detalharAnimal', {
+            animal: {
+                ...animalData,
+                tutorNome: animalData.Tutor ? animalData.Tutor.nome : 'Não informado'
+            }
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao detalhar animal');
     }
 });
 
-//editar animal
+//mostrar formulário de edição de animal
 app.get('/animais/:id/editar', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const animal = await Animal.findByPk(id);
-        const tutores = await Tutor.findAll();
+        let animal = await Animal.findByPk(req.params.id);
+        let tutores = await Tutor.findAll();
         if(!animal)
             return res.status(404).send('Animal não encontrado.');
-        const tutoresData = tutores.map(t => t.dataValues);
+        let tutoresData = tutores.map(t => t.dataValues);
         res.render('editarAnimal', {animal: animal.dataValues, tutores: tutoresData});
     } catch (error) {
         console.log(error);
-        res.status(500).send('Erro ao editar animal');
+        res.status(500).send('Erro ao buscar animal');
     }
 });
 
 //atualizar animal
-
 app.post('/animais/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const animal = await Animal.findByPk(id);
+        let animal = await Animal.findByPk(req.params.id);
         if (animal) {
             await animal.update({
                 nome: req.body.nome,
@@ -255,18 +254,16 @@ app.post('/animais/:id', async (req, res) => {
     }
 });
 
+
 //excluir animal
 
 app.post('/animais/:id/excluir', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const animal = await Animal.findByPk(id);
-        if(animal) {
-            await animal.destroy();
-            res.redirect('/animais');
-        } else {
-            return res.status(404).send('Animal não encontrado.');
-        }
+        let animal = await Animal.findByPk(req.params.id);
+
+        await animal.destroy();
+
+        res.redirect('/animais');
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao excluir animal');
@@ -274,20 +271,15 @@ app.post('/animais/:id/excluir', async (req, res) => {
 });
 
 //listar agendamentos
-
 app.get('/agendamentos', async (req, res) => {
     try {
-        const agendamentos = await Agendamento.findAll({
-            include: [{
-                model: Animal,
-                as: 'Animal',
-                include: [{model: Tutor, as: 'Tutor'}]
-            }]
+        let agendamentos = await Agendamento.findAll({
+            include: [{model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]}]
         });
-        const agendamentosComDados = agendamentos.map(ag => {
-            const agData = ag.dataValues;
-            const animal = agData.Animal;
-            const tutor = animal && animal.Tutor ? animal.Tutor : null;
+        agendamentos = agendamentos.map(ag => {
+            let agData = ag.dataValues;
+            let animal = agData.Animal;
+            let tutor = animal && animal.Tutor ? animal.Tutor : null;
             return {
                 ...agData,
                 animalNome: animal ? animal.nome : 'Não informado',
@@ -295,35 +287,35 @@ app.get('/agendamentos', async (req, res) => {
                 tutorNome: tutor ? tutor.nome : 'Não informado'
             };
         });
-        res.render('listarAgendamentos', {agendamentos: agendamentosComDados});
+        res.render('listarAgendamentos', {agendamentos: agendamentos});
     } catch (error) {
         console.log(error);
-        res.status(500).send('Erro ao buscar agendamentos');
+        res.status(500).send('Erro ao listar agendamentos');
     }
 });
 
-//cadastrar agendamento
+// get formulário de cadastro de agendamento
 
 app.get('/agendamentos/novo', async (req, res) => {
     try {
-        const animais = await Animal.findAll();
-        const animaisData = animais.map(a => a.dataValues);
-        res.render('cadastrarAgendamento', {animais: animaisData});
+        let animais = await Animal.findAll();
+        animais = animais.map(a => a.dataValues);
+        res.render('cadastrarAgendamento', {animais: animais});
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao buscar animais');
     }
 });
 
+// criar agemsframento
 app.post('/agendamentos', async (req, res) => {
     try {
-        const {animalId, tipoVacina, data, horario, status} = req.body;
         await Agendamento.create({
-            animalId: parseInt(animalId),
-            tipoVacina: tipoVacina,
-            data: data,
-            horario: horario,
-            status: status
+            animalId: parseInt(req.body.animalId),
+            tipoVacina: req.body.tipoVacina,
+            data: req.body.data,
+            horario: req.body.horario,
+            status: req.body.status
         });
         res.redirect('/agendamentos');
     } catch (error) {
@@ -332,44 +324,38 @@ app.post('/agendamentos', async (req, res) => {
     }
 });
 
+//detalhar agendamento
 app.get('/agendamentos/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const agendamento = await Agendamento.findByPk(id, {
+        let agendamento = await Agendamento.findByPk(req.params.id, {
             include: [{
                 model: Animal,
                 as: 'Animal',
                 include: [{model: Tutor, as: 'Tutor'}]
             }]
         });
-        if (agendamento) {
-            const agData = agendamento.dataValues;
-            const animal = agData.Animal;
-            const tutor = animal && animal.Tutor ? animal.Tutor : null;
-            res.render('detalharAgendamento', {
-                agendamento: {
-                    ...agData,
-                    animal: animal,
-                    tutor: tutor
-                }
-            });
-        } else {
-            res.status(404).send('Agendamento não encontrado');
-        }
+        let agData = agendamento.dataValues;
+        res.render('detalharAgendamento', {
+            agendamento: {
+                ...agData,
+                animal: agData.Animal,
+                tutor: agData.Animal?.Tutor
+            }
+        });
     } catch (error) {
         console.log(error);
-        res.status(500).send('Erro ao buscar agendamento');
+        res.status(500).send('Erro ao detalhar agendamento');
     }
 });
 
+//editar agendamento
 app.get('/agendamentos/:id/editar', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const agendamento = await Agendamento.findByPk(id);
-        const animais = await Animal.findAll();
+        let agendamento = await Agendamento.findByPk(req.params.id);
+        let animais = await Animal.findAll();
         if(!agendamento)
             return res.status(404).send('Agendamento não encontrado.');
-        const animaisData = animais.map(a => a.dataValues);
+        let animaisData = animais.map(a => a.dataValues);
         res.render('editarAgendamento', {agendamento: agendamento.dataValues, animais: animaisData});
     } catch (error) {
         console.log(error);
@@ -377,10 +363,10 @@ app.get('/agendamentos/:id/editar', async (req, res) => {
     }
 });
 
+//atualizar agendamento
 app.post('/agendamentos/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const agendamento = await Agendamento.findByPk(id);
+        let agendamento = await Agendamento.findByPk(req.params.id);
         if (agendamento) {
             await agendamento.update({
                 animalId: parseInt(req.body.animalId),
@@ -399,16 +385,15 @@ app.post('/agendamentos/:id', async (req, res) => {
     }
 });
 
+//excluir agendamento
 app.post('/agendamentos/:id/excluir', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const agendamento = await Agendamento.findByPk(id);
-        if(agendamento) {
+        let agendamento = await Agendamento.findByPk(req.params.id);
+        
             await agendamento.destroy();
+
             res.redirect('/agendamentos');
-        } else {
-            return res.status(404).send('Agendamento não encontrado.');
-        }
+        
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao excluir agendamento');
