@@ -33,24 +33,7 @@ db.sync({force: true}).then(() => {
     console.log('Banco de dados sincronizado');
 });
 
-/*
-let tutores = [ // tirar qnd tiver tudo certo
-    {id: 1, nome: "João Silva", telefone: "(11) 99999-1111", email: "joao@email.com"},
-    {id: 2, nome: "Maria Santos", telefone: "(11) 99999-2222", email: "maria@email.com"},
-    {id: 3, nome: "Pedro Oliveira", telefone: "(11) 99999-3333", email: "pedro@email.com"},
-];
 
-let animais = [ // tirar qnd tiver tudo certo
-    {id: 1, nome: "Rex", especie: "cachorro", raca: "Labrador", idade: 3, tutorId: 1},
-    {id: 2, nome: "Mimi", especie: "gato", raca: "Persa", idade: 2, tutorId: 2},
-    {id: 3, nome: "Bolinha", especie: "cachorro", raca: "Bulldog", idade: 5, tutorId: 1},
-];
-
-let agendamentos = [ // tirar qnd tiver tudo certo
-    {id: 1, animalId: 1, tipoVacina: "V8", data: "2024-12-20", horario: "10:00", status: "agendado"},
-    {id: 2, animalId: 2, tipoVacina: "Antirrábica", data: "2024-12-18", horario: "14:30", status: "realizado"},
-    {id: 3, animalId: 3, tipoVacina: "V10", data: "2024-12-22", horario: "09:00", status: "agendado"},
-];*/
 
 app.get('/', (req, res) => {
     res.render('home');
