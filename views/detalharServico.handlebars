@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhar Agendamento</title>
+    <title>Detalhar Serviço</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -57,8 +57,8 @@
             font-weight: bold;
             display: inline-block;
         }
-        .agendado {
-            background-color: #3498db;
+        .pendente {
+            background-color: #f39c12;
             color: white;
         }
         .realizado {
@@ -90,50 +90,58 @@
     </style>
 </head>
 <body>
-    <h1>Detalhar Agendamento</h1>
+    <h1>Detalhar Serviço</h1>
     <div class="nav-links">
         <a href="/">🏠 Início</a>
-        <a href="/agendamentos">← Voltar</a>
+        <a href="/servicos">← Voltar</a>
     </div>
     
     <div class="details">
         <div class="detail-item">
             <span class="detail-label">ID:</span>
-            <span class="detail-value">{{agendamento.id}}</span>
+            <span class="detail-value">{{servico.id}}</span>
         </div>
         <div class="detail-item">
             <span class="detail-label">Animal:</span>
-            <span class="detail-value">{{agendamento.animal.nome}} ({{agendamento.animal.especie}})</span>
+            <span class="detail-value">{{servico.animal.nome}} ({{servico.animal.especie}})</span>
         </div>
         <div class="detail-item">
             <span class="detail-label">Tutor:</span>
-            <span class="detail-value">{{agendamento.tutor.nome}}</span>
+            <span class="detail-value">{{servico.tutor.nome}}</span>
         </div>
         <div class="detail-item">
             <span class="detail-label">Funcionário:</span>
-            <span class="detail-value">{{agendamento.funcionario.nome}} ({{agendamento.funcionario.cargo}})</span>
+            <span class="detail-value">{{servico.funcionario.nome}} - {{servico.funcionario.cargo}}</span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Tipo de Vacina:</span>
-            <span class="detail-value">{{agendamento.tipoVacina}}</span>
+            <span class="detail-label">Produto:</span>
+            <span class="detail-value">{{#if servico.produto}}{{servico.produto.nome}} - R$ {{servico.produto.preco}}{{else}}Nenhum produto{{/if}}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Tipo de Serviço:</span>
+            <span class="detail-value">{{servico.tipoServico}}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Descrição:</span>
+            <span class="detail-value">{{servico.descricao}}</span>
         </div>
         <div class="detail-item">
             <span class="detail-label">Data:</span>
-            <span class="detail-value">{{agendamento.data}}</span>
+            <span class="detail-value">{{servico.data}}</span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Horário:</span>
-            <span class="detail-value">{{agendamento.horario}}</span>
+            <span class="detail-label">Valor:</span>
+            <span class="detail-value">R$ {{servico.valor}}</span>
         </div>
         <div class="detail-item">
             <span class="detail-label">Status:</span>
-            <span class="detail-value"><span class="status-badge {{agendamento.status}}">{{agendamento.status}}</span></span>
+            <span class="detail-value"><span class="status-badge {{servico.status}}">{{servico.status}}</span></span>
         </div>
     </div>
     
     <div class="actions">
-        <a href="/agendamentos/{{agendamento.id}}/editar" class="btn btn-edit">Editar</a>
-        <a href="/agendamentos" class="btn btn-back">Voltar para Lista</a>
+        <a href="/servicos/{{servico.id}}/editar" class="btn btn-edit">Editar</a>
+        <a href="/servicos" class="btn btn-back">Voltar para Lista</a>
     </div>
 </body>
 </html>

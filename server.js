@@ -5,14 +5,29 @@ const bodyParser = require('body-parser');
 const Tutor = require('./models/tutor.model');
 const Animal = require('./models/animal.model');
 const Agendamento = require('./models/agendamento.model');
+const Funcionario = require('./models/funcionario.model');
+const Produto = require('./models/produto.model');
+const Servico = require('./models/servico.model');
 const db = require('./config/database');
 
-// Definir relacionamentos
+
 Tutor.hasMany(Animal, { foreignKey: 'tutorId', as: 'Animais' });
 Animal.belongsTo(Tutor, { foreignKey: 'tutorId', as: 'Tutor' });
 
 Animal.hasMany(Agendamento, { foreignKey: 'animalId', as: 'Agendamentos' });
 Agendamento.belongsTo(Animal, { foreignKey: 'animalId', as: 'Animal' });
+
+Funcionario.hasMany(Agendamento, { foreignKey: 'funcionarioId', as: 'Agendamentos' });
+Agendamento.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' });
+
+Animal.hasMany(Servico, { foreignKey: 'animalId', as: 'Servicos' });
+Servico.belongsTo(Animal, { foreignKey: 'animalId', as: 'Animal' });
+
+Funcionario.hasMany(Servico, { foreignKey: 'funcionarioId', as: 'Servicos' });
+Servico.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' });
+
+Produto.hasMany(Servico, { foreignKey: 'produtoId', as: 'Servicos' });
+Servico.belongsTo(Produto, { foreignKey: 'produtoId', as: 'Produto' });
 //
 const port = 3000;
 
@@ -29,10 +44,9 @@ app.set('view engine', 'handlebars');
 
 app.use(bodyParser.urlencoded({extended: true}));
 
-db.sync({force: true}).then(() => {
+db.sync({force: false}).then(() => {
     console.log('Banco de dados sincronizado');
 });
-
 
 
 app.get('/', (req, res) => {
@@ -257,7 +271,10 @@ app.post('/animais/:id/excluir', async (req, res) => {
 app.get('/agendamentos', async (req, res) => {
     try {
         let agendamentos = await Agendamento.findAll({
-            include: [{model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]}]
+            include: [
+                {model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]},
+                {model: Funcionario, as: 'Funcionario'}
+            ]
         });
         agendamentos = agendamentos.map(ag => {
             let agData = ag.dataValues;
@@ -267,7 +284,8 @@ app.get('/agendamentos', async (req, res) => {
                 ...agData,
                 animalNome: animal ? animal.nome : 'Não informado',
                 animalEspecie: animal ? animal.especie : '',
-                tutorNome: tutor ? tutor.nome : 'Não informado'
+                tutorNome: tutor ? tutor.nome : 'Não informado',
+                funcionarioNome: agData.Funcionario ? agData.Funcionario.nome : 'Não atribuído'
             };
         });
         res.render('listarAgendamentos', {agendamentos: agendamentos});
@@ -282,8 +300,10 @@ app.get('/agendamentos', async (req, res) => {
 app.get('/agendamentos/novo', async (req, res) => {
     try {
         let animais = await Animal.findAll();
+        let funcionarios = await Funcionario.findAll();
         animais = animais.map(a => a.dataValues);
-        res.render('cadastrarAgendamento', {animais: animais});
+        funcionarios = funcionarios.map(f => f.dataValues);
+        res.render('cadastrarAgendamento', {animais: animais, funcionarios: funcionarios});
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao buscar animais');
@@ -295,6 +315,7 @@ app.post('/agendamentos', async (req, res) => {
     try {
         await Agendamento.create({
             animalId: parseInt(req.body.animalId),
+            funcionarioId: req.body.funcionarioId ? parseInt(req.body.funcionarioId) : null,
             tipoVacina: req.body.tipoVacina,
             data: req.body.data,
             horario: req.body.horario,
@@ -311,18 +332,18 @@ app.post('/agendamentos', async (req, res) => {
 app.get('/agendamentos/:id', async (req, res) => {
     try {
         let agendamento = await Agendamento.findByPk(req.params.id, {
-            include: [{
-                model: Animal,
-                as: 'Animal',
-                include: [{model: Tutor, as: 'Tutor'}]
-            }]
+            include: [
+                {model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]},
+                {model: Funcionario, as: 'Funcionario'}
+            ]
         });
-        let agData = agendamento.dataValues;
+        let agData = agendamento.get({ plain: true });
         res.render('detalharAgendamento', {
             agendamento: {
                 ...agData,
                 animal: agData.Animal,
-                tutor: agData.Animal?.Tutor
+                tutor: agData.Animal?.Tutor,
+                funcionario: agData.Funcionario
             }
         });
     } catch (error) {
@@ -336,10 +357,16 @@ app.get('/agendamentos/:id/editar', async (req, res) => {
     try {
         let agendamento = await Agendamento.findByPk(req.params.id);
         let animais = await Animal.findAll();
+        let funcionarios = await Funcionario.findAll();
         if(!agendamento)
             return res.status(404).send('Agendamento não encontrado.');
         let animaisData = animais.map(a => a.dataValues);
-        res.render('editarAgendamento', {agendamento: agendamento.dataValues, animais: animaisData});
+        let funcionariosData = funcionarios.map(f => f.dataValues);
+        res.render('editarAgendamento', {
+            agendamento: agendamento.dataValues,
+            animais: animaisData,
+            funcionarios: funcionariosData
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao buscar agendamento');
@@ -353,6 +380,7 @@ app.post('/agendamentos/:id', async (req, res) => {
         if (agendamento) {
             await agendamento.update({
                 animalId: parseInt(req.body.animalId),
+                funcionarioId: req.body.funcionarioId ? parseInt(req.body.funcionarioId) : null,
                 tipoVacina: req.body.tipoVacina,
                 data: req.body.data,
                 horario: req.body.horario,
@@ -383,7 +411,374 @@ app.post('/agendamentos/:id/excluir', async (req, res) => {
     }
 });
 
+
+
+// novox 3 CRUD
+
+//listar produtos
+app.get('/produtos', async (req, res) => {
+    try {
+        let produtos = await Produto.findAll();
+        produtos = produtos.map(p => p.dataValues);
+        res.render('listarProdutos', {produtos});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar produtos');
+    }
+});
+
+// Página novo produto
+
+app.get('/produtos/novo', (req, res) => {
+    res.render('cadastrarProduto');
+});
+
+app.post('/produtos', async (req, res) => {
+    try {
+        await Produto.create({
+            nome: req.body.nome,
+            descricao: req.body.descricao,
+            preco: parseFloat(req.body.preco),
+            estoque: parseInt(req.body.estoque),
+            categoria: req.body.categoria
+        });
+        res.redirect('/produtos');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao cadastrar produto');
+    }
+});
+
+//detalhar produto
+app.get('/produtos/:id', async (req, res) => {
+    try {
+        let produto = await Produto.findByPk(req.params.id);
+        if (produto) {
+            res.render('detalharProduto', {produto: produto.dataValues});
+        } else {
+            res.status(404).send('Produto não encontrado');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar produto');
+    }
+});
+
+//editar produto
+app.get('/produtos/:id/editar', async (req, res) => {
+    try {
+        let produto = await Produto.findByPk(req.params.id);
+        if(!produto)
+            return res.status(404).send('Produto não encontrado.');
+        res.render('editarProduto', {produto: produto.dataValues});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar produto');
+    }
+});
+
+//atualizar produto
+app.post('/produtos/:id', async (req, res) => {
+    try {
+        let produto = await Produto.findByPk(req.params.id);
+        if (produto) {
+            await produto.update({
+                nome: req.body.nome,
+                descricao: req.body.descricao,
+                preco: parseFloat(req.body.preco),
+                estoque: parseInt(req.body.estoque),
+                categoria: req.body.categoria
+            });
+            res.redirect('/produtos');
+        } else {
+            res.status(404).send('Produto não encontrado');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao atualizar produto');
+    }
+});
+
+//excluir produto
+app.post('/produtos/:id/excluir', async (req, res) => {
+    try {
+        let produto = await Produto.findByPk(req.params.id);
+        if(produto) {
+            await produto.destroy();
+            res.redirect('/produtos');
+        } else {
+            return res.status(404).send('Produto não encontrado.');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao excluir produto');
+    }
+});
+
+// CRUD SERVIÇOS
+//listar serviços
+app.get('/servicos', async (req, res) => {
+    try {
+        let servicos = await Servico.findAll({
+            include: [
+                {model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]},
+                {model: Funcionario, as: 'Funcionario'},
+                {model: Produto, as: 'Produto'}
+            ]
+        });
+        servicos = servicos.map(s => {
+            let servicoData = s.dataValues;
+            let animal = servicoData.Animal;
+            let tutor = animal && animal.Tutor ? animal.Tutor : null;
+            return {
+                ...servicoData,
+                animalNome: animal ? animal.nome : 'Não informado',
+                tutorNome: tutor ? tutor.nome : 'Não informado',
+                funcionarioNome: servicoData.Funcionario ? servicoData.Funcionario.nome : 'Não informado',
+                produtoNome: servicoData.Produto ? servicoData.Produto.nome : 'Sem produto'
+            };
+        });
+        res.render('listarServicos', {servicos});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar serviços');
+    }
+});
+
+//formulário de cadastro de serviço
+app.get('/servicos/novo', async (req, res) => {
+    try {
+        let animais = await Animal.findAll();
+        let funcionarios = await Funcionario.findAll();
+        let produtos = await Produto.findAll();
+        let animaisData = animais.map(a => a.dataValues);
+        let funcionariosData = funcionarios.map(f => f.dataValues);
+        let produtosData = produtos.map(p => p.dataValues);
+        res.render('cadastrarServico', {
+            animais: animaisData,
+            funcionarios: funcionariosData,
+            produtos: produtosData
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar dados');
+    }
+});
+
+//cadastrar serviço
+app.post('/servicos', async (req, res) => {
+    try {
+        await Servico.create({
+            animalId: parseInt(req.body.animalId),
+            funcionarioId: parseInt(req.body.funcionarioId),
+            produtoId: req.body.produtoId ? parseInt(req.body.produtoId) : null,
+            tipoServico: req.body.tipoServico,
+            descricao: req.body.descricao,
+            data: req.body.data,
+            valor: parseFloat(req.body.valor),
+            status: req.body.status || 'pendente'
+        });
+        res.redirect('/servicos');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao cadastrar serviço');
+    }
+});
+
+//detalhar serviço
+app.get('/servicos/:id', async (req, res) => {
+    try {
+        let servico = await Servico.findByPk(req.params.id, {
+            include: [
+                {model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]},
+                {model: Funcionario, as: 'Funcionario'},
+                {model: Produto, as: 'Produto'}
+            ]
+        });
+        if (servico) {
+            let servicoData = servico.dataValues;
+            res.render('detalharServico', {
+                servico: {
+                    ...servicoData,
+                    animal: servicoData.Animal,
+                    tutor: servicoData.Animal?.Tutor,
+                    funcionario: servicoData.Funcionario,
+                    produto: servicoData.Produto
+                }
+            });
+        } else {
+            res.status(404).send('Serviço não encontrado');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar serviço');
+    }
+});
+
+//editar serviço
+app.get('/servicos/:id/editar', async (req, res) => {
+    try {
+        let servico = await Servico.findByPk(req.params.id);
+        let animais = await Animal.findAll();
+        let funcionarios = await Funcionario.findAll();
+        let produtos = await Produto.findAll();
+        if(!servico)
+            return res.status(404).send('Serviço não encontrado.');
+        let animaisData = animais.map(a => a.dataValues);
+        let funcionariosData = funcionarios.map(f => f.dataValues);
+        let produtosData = produtos.map(p => p.dataValues);
+        res.render('editarServico', {
+            servico: servico.dataValues,
+            animais: animaisData,
+            funcionarios: funcionariosData,
+            produtos: produtosData
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar serviço');
+    }
+});
+
+//atualizar serviço
+app.post('/servicos/:id', async (req, res) => {
+    try {
+        let servico = await Servico.findByPk(req.params.id);
+        if (servico) {
+            await servico.update({
+                animalId: parseInt(req.body.animalId),
+                funcionarioId: parseInt(req.body.funcionarioId),
+                produtoId: req.body.produtoId ? parseInt(req.body.produtoId) : null,
+                tipoServico: req.body.tipoServico,
+                descricao: req.body.descricao,
+                data: req.body.data,
+                valor: parseFloat(req.body.valor),
+                status: req.body.status
+            });
+            res.redirect('/servicos');
+        } else {
+            res.status(404).send('Serviço não encontrado');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao atualizar serviço');
+    }
+});
+
+//excluir serviço
+app.post('/servicos/:id/excluir', async (req, res) => {
+    try {
+        let servico = await Servico.findByPk(req.params.id);
+        if(servico) {
+            await servico.destroy();
+            res.redirect('/servicos');
+        } else {
+            return res.status(404).send('Serviço não encontrado.');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao excluir serviço');
+    }
+});
+// CRUD FUNCIONÁRIOS
+
+//listar funcionários
+app.get('/funcionarios', async (req, res) => {
+    try {
+        let funcionarios = await Funcionario.findAll();
+        funcionarios = funcionarios.map(funcionario => funcionario.dataValues);
+        res.render('listarFuncionarios', {funcionarios});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar funcionários');
+    }
+});
+
+// Novo funcionário
+app.get('/funcionarios/novo', (req, res) => {
+    res.render('cadastrarFuncionario');
+});
+
+//cadastrar funcionário
+app.post('/funcionarios', async (req, res) => {
+    try {
+        await Funcionario.create({
+            nome: req.body.nome,
+            cargo: req.body.cargo,
+            telefone: req.body.telefone,
+            email: req.body.email
+        });
+        res.redirect('/funcionarios');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao cadastrar funcionário');
+    }
+});
+
+//detalhar funcionário
+app.get('/funcionarios/:id', async (req, res) => {
+    try {
+        let funcionario = await Funcionario.findByPk(req.params.id);
+        if (funcionario) {
+            res.render('detalharFuncionario', {funcionario: funcionario.dataValues});
+        } else {
+            res.status(404).send('Funcionário não encontrado');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar funcionário');
+    }
+});
+
+//editar funcionário
+app.get('/funcionarios/:id/editar', async (req, res) => {
+    try {
+        let funcionario = await Funcionario.findByPk(req.params.id);
+        if(!funcionario)
+            return res.status(404).send('Funcionário não encontrado.');
+        res.render('editarFuncionario', {funcionario: funcionario.dataValues});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar funcionário');
+    }
+});
+
+//atualizar funcionário
+app.post('/funcionarios/:id', async (req, res) => {
+    try {
+        let funcionario = await Funcionario.findByPk(req.params.id);
+        if (funcionario) {
+            await funcionario.update({
+                nome: req.body.nome,
+                cargo: req.body.cargo,
+                telefone: req.body.telefone,
+                email: req.body.email
+            });
+            res.redirect('/funcionarios');
+        } else {
+            res.status(404).send('Funcionário não encontrado');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao atualizar funcionário');
+    }
+});
+
+//excluir funcionário
+app.post('/funcionarios/:id/excluir', async (req, res) => {
+    try {
+        let funcionario = await Funcionario.findByPk(req.params.id);
+        if(funcionario) {
+            await funcionario.destroy();
+            res.redirect('/funcionarios');
+        } else {
+            return res.status(404).send('Funcionário não encontrado.');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao excluir funcionário');
+    }
+});
+
 app.listen(port, () => {
     console.log(`Servidor em execução: http://localhost:${port}`);
-
 });

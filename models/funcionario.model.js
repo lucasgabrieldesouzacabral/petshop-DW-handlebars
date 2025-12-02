@@ -1,32 +1,24 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../config/database');
 
-const Agendamento = sequelize.define('Agendamento', {
-    animalId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    funcionarioId: {
-        type: DataTypes.INTEGER,
-        allowNull: true, // Pode ser opcional inicialmente
-    },
-    tipoVacina: {
+const Funcionario = sequelize.define('Funcionario', {
+    nome: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    data: {
+    cargo: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    horario: {
+    telefone: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    status: {
+    email: {
         type: DataTypes.STRING,
         allowNull: false,
     }
 });
 
-module.exports = Agendamento;
+module.exports = Funcionario;
 

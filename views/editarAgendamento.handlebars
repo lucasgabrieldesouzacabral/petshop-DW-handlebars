@@ -79,6 +79,15 @@
                 {{/each}}
             </select>
         </div>
+        <div"form-group"></div>
+        <label for="funcionarioId">Funcionario:</label>
+        <select name="funcionarioId" id="funcionarioId" required>
+            <option value="">Selecione um funcionário</option>
+            {{#each funcionarios}}
+            <option value="{{id}}" {{#if (eq id ../agendamento.funcionarioId)}}selected{{/if}}>{{nome}} ({{cargo}})</option>
+            {{/each}}
+        </select>
+        </div>
         
         <div class="form-group">
             <label for="tipoVacina">Tipo de Vacina:</label>

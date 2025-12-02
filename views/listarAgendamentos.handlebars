@@ -97,7 +97,6 @@
     <h1>Listar Agendamentos de Vacina</h1>
     <div class="nav-links">
         <a href="/">🏠 Início</a>
-        <a href="/agendamentos/novo">➕ Novo Agendamento</a>
     </div>
     
     <a href="/agendamentos/novo" class="btn-new">Cadastrar Novo Agendamento</a>
@@ -110,10 +109,12 @@
                 <th>Espécie</th>
                 <th>Tutor</th>
                 <th>Tipo de Vacina</th>
+                <th>Funcionario</th>
                 <th>Data</th>
                 <th>Horário</th>
                 <th>Status</th>
                 <th>Ações</th>
+
             </tr>
         </thead>
         <tbody>
@@ -124,6 +125,7 @@
                 <td>{{animalEspecie}}</td>
                 <td>{{tutorNome}}</td>
                 <td>{{tipoVacina}}</td>
+                <td>{{funcionarioNome}}</td>            
                 <td>{{data}}</td>
                 <td>{{horario}}</td>
                 <td><span class="status-badge {{status}}">{{status}}</span></td>

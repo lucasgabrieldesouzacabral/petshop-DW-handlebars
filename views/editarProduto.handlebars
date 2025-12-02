@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Produto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .nav-links {
+            margin-bottom: 20px;
+        }
+        .nav-links a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #3498db;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        form {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #229954;
+        }
+    </style>
+</head>
+<body>
+    <h1>Editar Produto</h1>
+    <div class="nav-links">
+        <a href="/">🏠 Início</a>
+        <a href="/produtos">← Voltar</a>
+    </div>
+    
+    <form action="/produtos/{{produto.id}}" method="post">
+        <div class="form-group">
+            <label for="nome">Nome do Produto:</label>
+            <input type="text" name="nome" id="nome" value="{{produto.nome}}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" rows="3">{{produto.descricao}}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="preco">Preço (R$):</label>
+            <input type="number" name="preco" id="preco" step="0.01" min="0" value="{{produto.preco}}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="estoque">Estoque:</label>
+            <input type="number" name="estoque" id="estoque" min="0" value="{{produto.estoque}}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="categoria">Categoria:</label>
+            <select name="categoria" id="categoria" required>
+                <option value="">Selecione a categoria</option>
+                <option value="Ração" {{#if (eq produto.categoria "Ração")}}selected{{/if}}>Ração</option>
+                <option value="Brinquedo" {{#if (eq produto.categoria "Brinquedo")}}selected{{/if}}>Brinquedo</option>
+                <option value="Acessório" {{#if (eq produto.categoria "Acessório")}}selected{{/if}}>Acessório</option>
+                <option value="Higiene" {{#if (eq produto.categoria "Higiene")}}selected{{/if}}>Higiene</option>
+                <option value="Medicamento" {{#if (eq produto.categoria "Medicamento")}}selected{{/if}}>Medicamento</option>
+                <option value="Outro" {{#if (eq produto.categoria "Outro")}}selected{{/if}}>Outro</option>
+            </select>
+        </div>
+        
+        <button type="submit">Salvar Alterações</button>
+    </form>
+</body>
+</html>
+

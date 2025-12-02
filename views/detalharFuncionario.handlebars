@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhar Agendamento</title>
+    <title>Detalhar Funcionário</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -50,25 +50,6 @@
             color: #2c3e50;
             font-size: 18px;
         }
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .agendado {
-            background-color: #3498db;
-            color: white;
-        }
-        .realizado {
-            background-color: #27ae60;
-            color: white;
-        }
-        .cancelado {
-            background-color: #e74c3c;
-            color: white;
-        }
         .actions {
             margin-top: 20px;
         }
@@ -90,50 +71,38 @@
     </style>
 </head>
 <body>
-    <h1>Detalhar Agendamento</h1>
+    <h1>Detalhar Funcionário</h1>
     <div class="nav-links">
         <a href="/">🏠 Início</a>
-        <a href="/agendamentos">← Voltar</a>
+        <a href="/funcionarios">← Voltar</a>
     </div>
     
     <div class="details">
         <div class="detail-item">
             <span class="detail-label">ID:</span>
-            <span class="detail-value">{{agendamento.id}}</span>
+            <span class="detail-value">{{funcionario.id}}</span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Animal:</span>
-            <span class="detail-value">{{agendamento.animal.nome}} ({{agendamento.animal.especie}})</span>
+            <span class="detail-label">Nome:</span>
+            <span class="detail-value">{{funcionario.nome}}</span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Tutor:</span>
-            <span class="detail-value">{{agendamento.tutor.nome}}</span>
+            <span class="detail-label">Cargo:</span>
+            <span class="detail-value">{{funcionario.cargo}}</span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Funcionário:</span>
-            <span class="detail-value">{{agendamento.funcionario.nome}} ({{agendamento.funcionario.cargo}})</span>
+            <span class="detail-label">Telefone:</span>
+            <span class="detail-value">{{funcionario.telefone}}</span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Tipo de Vacina:</span>
-            <span class="detail-value">{{agendamento.tipoVacina}}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Data:</span>
-            <span class="detail-value">{{agendamento.data}}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Horário:</span>
-            <span class="detail-value">{{agendamento.horario}}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Status:</span>
-            <span class="detail-value"><span class="status-badge {{agendamento.status}}">{{agendamento.status}}</span></span>
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{funcionario.email}}</span>
         </div>
     </div>
     
     <div class="actions">
-        <a href="/agendamentos/{{agendamento.id}}/editar" class="btn btn-edit">Editar</a>
-        <a href="/agendamentos" class="btn btn-back">Voltar para Lista</a>
+        <a href="/funcionarios/{{funcionario.id}}/editar" class="btn btn-edit">Editar</a>
+        <a href="/funcionarios" class="btn btn-back">Voltar para Lista</a>
     </div>
 </body>
 </html>

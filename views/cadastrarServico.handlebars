@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Serviço</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .nav-links {
+            margin-bottom: 20px;
+        }
+        .nav-links a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #3498db;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        form {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #229954;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cadastrar Serviço</h1>
+    <div class="nav-links">
+        <a href="/">🏠 Início</a>
+        <a href="/servicos">← Voltar</a>
+    </div>
+    
+    <form action="/servicos" method="post">
+        <div class="form-group">
+            <label for="animalId">Animal:</label>
+            <select name="animalId" id="animalId" required>
+                <option value="">Selecione um animal</option>
+                {{#each animais}}
+                <option value="{{id}}">{{nome}} ({{especie}})</option>
+                {{/each}}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="funcionarioId">Funcionário Responsável:</label>
+            <select name="funcionarioId" id="funcionarioId" required>
+                <option value="">Selecione um funcionário</option>
+                {{#each funcionarios}}
+                <option value="{{id}}">{{nome}} - {{cargo}}</option>
+                {{/each}}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="produtoId">Produto (Opcional):</label>
+            <select name="produtoId" id="produtoId">
+                <option value="">Nenhum produto</option>
+                {{#each produtos}}
+                <option value="{{id}}">{{nome}} - R$ {{preco}}</option>
+                {{/each}}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="tipoServico">Tipo de Serviço:</label>
+            <select name="tipoServico" id="tipoServico" required>
+                <option value="">Selecione o tipo de serviço</option>
+                <option value="Agendamento de Vacina">Agendamento de vacina</option>
+                <option value="Compra de produto">Compra de produto</option>
+                <option value="Banho">Banho</option>
+                <option value="Tosa">Tosa</option>
+                <option value="Consulta Veterinária">Consulta veterinária</option>
+                <option value="Outro">Outro</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="data">Data:</label>
+            <input type="date" name="data" id="data" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="valor">Valor (R$):</label>
+            <input type="number" name="valor" id="valor" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select name="status" id="status" required>
+                <option value="pendente" selected>Pendente</option>
+                <option value="realizado">Realizado</option>
+                <option value="cancelado">Cancelado</option>
+            </select>
+        </div>
+        
+        <button type="submit">Cadastrar Serviço</button>
+    </form>
+</body>
+</html>
+

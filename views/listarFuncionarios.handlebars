@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Tutores</title>
+    <title>Listar Funcionários</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -76,35 +76,37 @@
     </style>
 </head>
 <body>
-    <h1>Listar Tutores</h1>
+    <h1>Listar Funcionários</h1>
     <div class="nav-links">
         <a href="/">🏠 Início</a>
     </div>
     
-    <a href="/tutores/novo" class="btn-new">Cadastrar Novo Tutor</a>
+    <a href="/funcionarios/novo" class="btn-new">Cadastrar Novo Funcionário</a>
     
     <table>
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
+                <th>Cargo</th>
                 <th>Telefone</th>
                 <th>Email</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-            {{#each tutores}}
+            {{#each funcionarios}}
             <tr>
                 <td>{{id}}</td>
                 <td>{{nome}}</td>
+                <td>{{cargo}}</td>
                 <td>{{telefone}}</td>
                 <td>{{email}}</td>
                 <td>
-                    <a href="/tutores/{{id}}" class="btn btn-view">Ver</a>
-                    <a href="/tutores/{{id}}/editar" class="btn btn-edit">Editar</a>
-                    <form action="/tutores/{{id}}/excluir" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este tutor?')">Excluir</button>
+                    <a href="/funcionarios/{{id}}" class="btn btn-view">Ver</a>
+                    <a href="/funcionarios/{{id}}/editar" class="btn btn-edit">Editar</a>
+                    <form action="/funcionarios/{{id}}/excluir" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este funcionário?')">Excluir</button>
                     </form>
                 </td>
             </tr>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Tutores</title>
+    <title>Listar Produtos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -76,35 +76,39 @@
     </style>
 </head>
 <body>
-    <h1>Listar Tutores</h1>
+    <h1>Listar Produtos</h1>
     <div class="nav-links">
         <a href="/">🏠 Início</a>
     </div>
     
-    <a href="/tutores/novo" class="btn-new">Cadastrar Novo Tutor</a>
+    <a href="/produtos/novo" class="btn-new">Cadastrar Novo Produto</a>
     
     <table>
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>Telefone</th>
-                <th>Email</th>
+                <th>Descrição</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th>Categoria</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-            {{#each tutores}}
+            {{#each produtos}}
             <tr>
                 <td>{{id}}</td>
                 <td>{{nome}}</td>
-                <td>{{telefone}}</td>
-                <td>{{email}}</td>
+                <td>{{descricao}}</td>
+                <td>R$ {{preco}}</td>
+                <td>{{estoque}}</td>
+                <td>{{categoria}}</td>
                 <td>
-                    <a href="/tutores/{{id}}" class="btn btn-view">Ver</a>
-                    <a href="/tutores/{{id}}/editar" class="btn btn-edit">Editar</a>
-                    <form action="/tutores/{{id}}/excluir" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este tutor?')">Excluir</button>
+                    <a href="/produtos/{{id}}" class="btn btn-view">Ver</a>
+                    <a href="/produtos/{{id}}/editar" class="btn btn-edit">Editar</a>
+                    <form action="/produtos/{{id}}/excluir" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</button>
                     </form>
                 </td>
             </tr>

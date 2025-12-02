@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Tutores</title>
+    <title>Listar Serviços</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 20px auto;
             padding: 20px;
         }
@@ -73,38 +73,66 @@
             border: none;
             cursor: pointer;
         }
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .pendente {
+            background-color: #f39c12;
+            color: white;
+        }
+        .realizado {
+            background-color: #27ae60;
+            color: white;
+        }
+        .cancelado {
+            background-color: #e74c3c;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <h1>Listar Tutores</h1>
+    <h1>Listar Serviços</h1>
     <div class="nav-links">
         <a href="/">🏠 Início</a>
     </div>
     
-    <a href="/tutores/novo" class="btn-new">Cadastrar Novo Tutor</a>
+    <a href="/servicos/novo" class="btn-new">Cadastrar Novo Serviço</a>
     
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nome</th>
-                <th>Telefone</th>
-                <th>Email</th>
+                <th>Animal</th>
+                <th>Tutor</th>
+                <th>Tipo de Serviço</th>
+                <th>Funcionário</th>
+                <th>Produto</th>
+                <th>Data</th>
+                <th>Valor</th>
+                <th>Status</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-            {{#each tutores}}
+            {{#each servicos}}
             <tr>
                 <td>{{id}}</td>
-                <td>{{nome}}</td>
-                <td>{{telefone}}</td>
-                <td>{{email}}</td>
+                <td>{{animalNome}}</td>
+                <td>{{tutorNome}}</td>
+                <td>{{tipoServico}}</td>
+                <td>{{funcionarioNome}}</td>
+                <td>{{produtoNome}}</td>
+                <td>{{data}}</td>
+                <td>R$ {{valor}}</td>
+                <td><span class="status-badge {{status}}">{{status}}</span></td>
                 <td>
-                    <a href="/tutores/{{id}}" class="btn btn-view">Ver</a>
-                    <a href="/tutores/{{id}}/editar" class="btn btn-edit">Editar</a>
-                    <form action="/tutores/{{id}}/excluir" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este tutor?')">Excluir</button>
+                    <a href="/servicos/{{id}}" class="btn btn-view">Ver</a>
+                    <a href="/servicos/{{id}}/editar" class="btn btn-edit">Editar</a>
+                    <form action="/servicos/{{id}}/excluir" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este serviço?')">Excluir</button>
                     </form>
                 </td>
             </tr>

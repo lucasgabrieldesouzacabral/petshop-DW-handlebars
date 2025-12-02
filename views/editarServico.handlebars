@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Serviço</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .nav-links {
+            margin-bottom: 20px;
+        }
+        .nav-links a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #3498db;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        form {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #229954;
+        }
+    </style>
+</head>
+<body>
+    <h1>Editar Serviço</h1>
+    <div class="nav-links">
+        <a href="/">🏠 Início</a>
+        <a href="/servicos">← Voltar</a>
+    </div>
+    
+    <form action="/servicos/{{servico.id}}" method="post">
+        <div class="form-group">
+            <label for="animalId">Animal:</label>
+            <select name="animalId" id="animalId" required>
+                <option value="">Selecione um animal</option>
+                {{#each animais}}
+                <option value="{{id}}" {{#if (eq id ../servico.animalId)}}selected{{/if}}>{{nome}} ({{especie}})</option>
+                {{/each}}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="funcionarioId">Funcionário Responsável:</label>
+            <select name="funcionarioId" id="funcionarioId" required>
+                <option value="">Selecione um funcionário</option>
+                {{#each funcionarios}}
+                <option value="{{id}}" {{#if (eq id ../servico.funcionarioId)}}selected{{/if}}>{{nome}} - {{cargo}}</option>
+                {{/each}}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="produtoId">Produto (Opcional):</label>
+            <select name="produtoId" id="produtoId">
+                <option value="">Nenhum produto</option>
+                {{#each produtos}}
+                <option value="{{id}}" {{#if (eq id ../servico.produtoId)}}selected{{/if}}>{{nome}} - R$ {{preco}}</option>
+                {{/each}}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="tipoServico">Tipo de Serviço:</label>
+            <select name="tipoServico" id="tipoServico" required>
+                <option value="">Selecione o tipo de serviço</option>
+                <option value="Agendamento de Vacina" {{#if (eq servico.tipoServico "Agendamento de Vacina")}}selected{{/if}}>Agendamento de Vacina</option>
+                <option value="Compra de Brinquedo" {{#if (eq servico.tipoServico "Compra de Brinquedo")}}selected{{/if}}>Compra de Brinquedo</option>
+                <option value="Banho" {{#if (eq servico.tipoServico "Banho")}}selected{{/if}}>Banho</option>
+                <option value="Tosa" {{#if (eq servico.tipoServico "Tosa")}}selected{{/if}}>Tosa</option>
+                <option value="Consulta Veterinária" {{#if (eq servico.tipoServico "Consulta Veterinária")}}selected{{/if}}>Consulta Veterinária</option>
+                <option value="Outro" {{#if (eq servico.tipoServico "Outro")}}selected{{/if}}>Outro</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" rows="3">{{servico.descricao}}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="data">Data:</label>
+            <input type="date" name="data" id="data" value="{{servico.data}}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="valor">Valor (R$):</label>
+            <input type="number" name="valor" id="valor" step="0.01" min="0" value="{{servico.valor}}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select name="status" id="status" required>
+                <option value="pendente" {{#if (eq servico.status "pendente")}}selected{{/if}}>Pendente</option>
+                <option value="realizado" {{#if (eq servico.status "realizado")}}selected{{/if}}>Realizado</option>
+                <option value="cancelado" {{#if (eq servico.status "cancelado")}}selected{{/if}}>Cancelado</option>
+            </select>
+        </div>
+        
+        <button type="submit">Salvar Alterações</button>
+    </form>
+</body>
+</html>
+
