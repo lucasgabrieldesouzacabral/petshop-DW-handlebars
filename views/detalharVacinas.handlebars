@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhar Vacina</title>
+
+    <style>
+        body {
+            background-color: #d6edec;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #476360;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 450px;
+            margin: 25px auto;
+            text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            margin-bottom: 12px;
+        }
+
+        .info span {
+            font-weight: bold;
+            color: #476360;
+        }
+
+        .btn {
+            background-color: #476360;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Vacinas</h1>
+    <h2>Detalhar vacina</h2>
+
+    <div class="card">
+
+        <div class="info">
+            <span>ID:</span> {{vacina.id}}
+        </div>
+
+        <div class="info">
+            <span>Animal:</span> {{vacina.animal_nome}}
+        </div>
+
+        <div class="info">
+            <span>Responsável:</span> {{vacina.funcionario_nome}}
+        </div>
+
+        <div class="info">
+            <span>Nome da Vacina:</span> {{vacina.nomeVacina}}
+        </div>
+
+        <div class="info">
+            <span>Data da Aplicação:</span> {{vacina.dataAplicacao}}
+        </div>
+
+        <div class="info">
+            <span>Dose:</span> {{vacina.dose}}
+        </div>
+
+        <div class="info">
+            <span>Status:</span> {{vacina.status}}
+        </div>
+
+        <div class="info">
+            <span>Observações:</span> {{vacina.obs}}
+        </div>
+
+    </div>
+
+    <a href="/vacinas/editar/{{vacina.id}}" class="btn">Editar</a>
+    <a href="/vacinas/listar" class="btn">Voltar</a>
+
+</body>
+</html>

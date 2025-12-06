@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Vacina</title>
+
+    <style>
+        body {
+            background-color: #d6edec;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #476360;
+        }
+
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 500px;
+            margin: 20px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        label {
+            display: block;
+            margin: 12px 0 5px;
+            font-weight: bold;
+            color: #476360;
+            text-align: left;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #aaa;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        textarea {
+            height: 80px;
+        }
+
+        .btn {
+            background-color: #476360;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Vacinas</h1>
+    <h2>Editar vacina</h2>
+
+    <form action="/vacinas/editar/{{vacina.id}}" method="POST">
+
+        <!-- ANIMAL -->
+        <label for="animal">Animal</label>
+        <select name="animal" id="animal" required>
+            {{#each animais}}
+                <option value="{{id}}" 
+                    {{#ifCond id ../vacina.animal_id}}selected{{/ifCond}}>
+                    {{nome}}
+                </option>
+            {{/each}}
+        </select>
+
+        <!-- FUNCIONÁRIO -->
+        <label for="funcionario">Funcionário Responsável</label>
+        <select name="funcionario" id="funcionario" required>
+            {{#each funcionarios}}
+                <option value="{{id}}" 
+                    {{#ifCond id ../vacina.funcionario_id}}selected{{/ifCond}}>
+                    {{nome}}
+                </option>
+            {{/each}}
+        </select>
+
+        <!-- NOME DA VACINA -->
+        <label for="nomeVacina">Nome da Vacina</label>
+        <input 
+            type="text" 
+            name="nomeVacina" 
+            id="nomeVacina" 
+            value="{{vacina.nomeVacina}}" 
+            required
+        >
+
+        <!-- DATA -->
+        <label for="dataAplicacao">Data da Aplicação</label>
+        <input 
+            type="date" 
+            name="dataAplicacao" 
+            id="dataAplicacao" 
+            value="{{vacina.dataAplicacao}}" 
+            required
+        >
+
+        <!-- DOSE -->
+        <label for="dose">Dose</label>
+        <input 
+            type="text" 
+            name="dose" 
+            id="dose" 
+            value="{{vacina.dose}}" 
+            required
+        >
+
+        <!-- OBSERVAÇÃO -->
+        <label for="obs">Observações</label>
+        <textarea name="obs" id="obs">{{vacina.obs}}</textarea>
+
+        <!-- STATUS -->
+        <label for="status">Status</label>
+        <select name="status" id="status" required>
+            <option value="Aplicada"  {{#ifEq vacina.status "Aplicada"}}selected{{/ifEq}}>Aplicada</option>
+            <option value="Pendente"  {{#ifEq vacina.status "Pendente"}}selected{{/ifEq}}>Pendente</option>
+            <option value="Atrasada"  {{#ifEq vacina.status "Atrasada"}}selected{{/ifEq}}>Atrasada</option>
+        </select>
+
+        <button class="btn" type="submit">Salvar alterações</button>
+    </form>
+
+    <a href="/vacinas/detalhar/{{vacina.id}}" class="btn">Voltar</a>
+
+</body>
+</html>

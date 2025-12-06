@@ -80,18 +80,15 @@
             </select>
         </div>
         
-        <div class="form-group">
-            <label for="tipoVacina">Tipo de Vacina:</label>
-            <select name="tipoVacina" id="tipoVacina" required>
-                <option value="">Selecione o tipo de vacina</option>
-                <option value="V8">V8</option>
-                <option value="V10">V10</option>
-                <option value="Antirrábica">Antirrábica</option>
-                <option value="Gripe">Gripe</option>
-                <option value="Quádrupla">Quádrupla</option>
-                <option value="Outra">Outra</option>
-            </select>
-        </div>
+    <div class="form-group">
+        <label for="vacinaId">Vacina:</label>
+        <select name="vacinaId" id="vacinaId" required>
+            <option value="">Selecione uma vacina</option>
+                {{#each vacinas}}
+                <option value="{{id}}">{{nome}} — {{tipo}} ({{fabricante}})</option>
+                {{/each}}
+        </select>
+    </div>
         
         <div class="form-group">
             <label for="data">Data:</label>

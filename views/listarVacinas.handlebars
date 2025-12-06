@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Vacinas</title>
+
+    <style>
+        body {
+            background-color: #d6edec;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #476360;
+        }
+
+        table {
+            margin: 30px auto;
+            width: 80%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #476360;
+            color: white;
+            padding: 12px;
+            font-size: 17px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn {
+            background-color: #476360;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 3px;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .top-buttons {
+            margin-top: 20px;
+        }
+
+        .top-buttons a {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Vacinas</h1>
+    <h2>Lista de vacinas cadastradas</h2>
+
+    <div class="top-buttons">
+        <a href="/vacinas/cadastrar" class="btn">Cadastrar nova vacina</a>
+        <a href="/vacinas/home" class="btn">Voltar</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Animal</th>
+                <th>Nome da Vacina</th>
+                <th>Data da Aplicação</th>
+                <th>Dose</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each vacinas}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{animal_nome}}</td>
+                <td>{{nomeVacina}}</td>
+                <td>{{dataAplicacao}}</td>
+                <td>{{dose}}</td>
+                <td>{{status}}</td>
+
+                <td>
+                    <a href="/vacinas/ver/{{id}}" class="btn">Ver</a>
+                    <a href="/vacinas/editar/{{id}}" class="btn">Editar</a>
+                    <a href="/vacinas/excluir/{{id}}" class="btn">Excluir</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+</body>
+</html>

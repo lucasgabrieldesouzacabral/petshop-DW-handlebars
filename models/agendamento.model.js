@@ -10,8 +10,8 @@ const Agendamento = sequelize.define('Agendamento', {
         type: DataTypes.INTEGER,
         allowNull: true, // Pode ser opcional inicialmente
     },
-    tipoVacina: {
-        type: DataTypes.STRING,
+    vacinaId: {                    
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     data: {

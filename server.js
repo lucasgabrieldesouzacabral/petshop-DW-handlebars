@@ -9,7 +9,7 @@ const Funcionario = require('./models/funcionario.model');
 const Produto = require('./models/produto.model');
 const Servico = require('./models/servico.model');
 const db = require('./config/database');
-
+const Vacina = require('./models/vacina.model');
 
 Tutor.hasMany(Animal, { foreignKey: 'tutorId', as: 'Animais' });
 Animal.belongsTo(Tutor, { foreignKey: 'tutorId', as: 'Tutor' });
@@ -273,7 +273,8 @@ app.get('/agendamentos', async (req, res) => {
         let agendamentos = await Agendamento.findAll({
             include: [
                 {model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]},
-                {model: Funcionario, as: 'Funcionario'}
+                {model: Funcionario, as: 'Funcionario'},
+                {model: Vacina, as: 'Vacina'}
             ]
         });
         agendamentos = agendamentos.map(ag => {
@@ -301,9 +302,11 @@ app.get('/agendamentos/novo', async (req, res) => {
     try {
         let animais = await Animal.findAll();
         let funcionarios = await Funcionario.findAll();
+        let vacinas = await Vacina.findAll();
+        vacinas = vacinas.map(v => v.dataValues);
         animais = animais.map(a => a.dataValues);
         funcionarios = funcionarios.map(f => f.dataValues);
-        res.render('cadastrarAgendamento', {animais: animais, funcionarios: funcionarios});
+        res.render('cadastrarAgendamento', {animais: animais, funcionarios: funcionarios, vacinas: vacinas});
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao buscar animais');
@@ -316,7 +319,7 @@ app.post('/agendamentos', async (req, res) => {
         await Agendamento.create({
             animalId: parseInt(req.body.animalId),
             funcionarioId: req.body.funcionarioId ? parseInt(req.body.funcionarioId) : null,
-            tipoVacina: req.body.tipoVacina,
+            vacinaId: parseInt(req.body.vacinaId),
             data: req.body.data,
             horario: req.body.horario,
             status: req.body.status
@@ -334,7 +337,8 @@ app.get('/agendamentos/:id', async (req, res) => {
         let agendamento = await Agendamento.findByPk(req.params.id, {
             include: [
                 {model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]},
-                {model: Funcionario, as: 'Funcionario'}
+                {model: Funcionario, as: 'Funcionario'},
+                {model: Vacina, as: 'Vacina'}
             ]
         });
         let agData = agendamento.get({ plain: true });
@@ -358,14 +362,17 @@ app.get('/agendamentos/:id/editar', async (req, res) => {
         let agendamento = await Agendamento.findByPk(req.params.id);
         let animais = await Animal.findAll();
         let funcionarios = await Funcionario.findAll();
+        let vacinas = await Vacina.findAll();
         if(!agendamento)
             return res.status(404).send('Agendamento não encontrado.');
         let animaisData = animais.map(a => a.dataValues);
         let funcionariosData = funcionarios.map(f => f.dataValues);
+        let vacinasData = vacinas.map(v => v.dataValues);
         res.render('editarAgendamento', {
             agendamento: agendamento.dataValues,
             animais: animaisData,
-            funcionarios: funcionariosData
+            funcionarios: funcionariosData,
+            vacinas: vacinasData
         });
     } catch (error) {
         console.log(error);
@@ -381,7 +388,7 @@ app.post('/agendamentos/:id', async (req, res) => {
             await agendamento.update({
                 animalId: parseInt(req.body.animalId),
                 funcionarioId: req.body.funcionarioId ? parseInt(req.body.funcionarioId) : null,
-                tipoVacina: req.body.tipoVacina,
+                vacinaId: parseInt(req.body.vacinaId),
                 data: req.body.data,
                 horario: req.body.horario,
                 status: req.body.status
@@ -777,6 +784,89 @@ app.post('/funcionarios/:id/excluir', async (req, res) => {
         console.log(error);
         res.status(500).send('Erro ao excluir funcionário');
     }
+});
+
+app.get('/vacinas', async (req, res) => {
+    const vacinas = await Vacina.findAll({
+        include: ['animal', 'funcionario']
+    });
+    res.render('listarVacinas', { vacinas });
+});
+
+app.get('/vacinas/cadastrar', async (req, res) => {
+    const animais = await Animal.findAll();
+    const funcionarios = await Funcionario.findAll();
+    res.render('cadastrarVacina', { animais, funcionarios });
+});
+
+app.post('/vacinas/cadastrar', async (req, res) => {
+    const { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
+
+    await Vacina.create({
+        animalId,
+        funcionarioId: funcionarioId || null,
+        tipoVacina,
+        dataAplicacao,
+        proximaDose
+    });
+
+    res.redirect('/vacinas');
+});
+
+app.get('/vacinas/:id', async (req, res) => {
+    const vacina = await Vacina.findByPk(req.params.id, {
+        include: ['animal', 'funcionario']
+    });
+    res.render('detalharVacina', { vacina });
+});
+
+app.get('/vacinas/editar/:id', async (req, res) => {
+    const vacina = await Vacina.findByPk(req.params.id);
+    const animais = await Animal.findAll();
+    const funcionarios = await Funcionario.findAll();
+    res.render('editarVacina', { vacina, animais, funcionarios });
+});
+
+app.get("/vacinas/detalhar/:id", async (req, res) => {
+    const id = req.params.id;
+
+    const vacina = await db.getVacinaById(id);
+
+    res.render("vacinas/detalharVacina", { vacina });
+});
+
+app.post('/vacinas/editar/:id', async (req, res) => {
+    const { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
+
+    await Vacina.update({
+        animalId,
+        funcionarioId: funcionarioId || null,
+        tipoVacina,
+        dataAplicacao,
+        proximaDose
+    }, {
+        where: { id: req.params.id }
+    });
+
+    res.redirect('/vacinas');
+});
+
+app.get('/vacinas/deletar/:id', async (req, res) => {
+    await Vacina.destroy({
+        where: { id: req.params.id }
+    });
+
+    res.redirect('/vacinas');
+});
+
+const hbs = require("hbs");
+
+hbs.registerHelper("ifEq", function(a, b, options) {
+    return (a == b) ? options.fn(this) : options.inverse(this);
+});
+
+hbs.registerHelper("ifCond", function(a, b, options) {
+    return (a == b) ? options.fn(this) : options.inverse(this);
 });
 
 app.listen(port, () => {
