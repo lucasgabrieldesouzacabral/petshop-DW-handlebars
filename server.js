@@ -29,8 +29,9 @@ Servico.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' 
 Produto.hasMany(Servico, { foreignKey: 'produtoId', as: 'Servicos' });
 Servico.belongsTo(Produto, { foreignKey: 'produtoId', as: 'Produto' });
 
-Vacina.hasMany(Agendamento, { foreignKey: 'vacinaId', as: 'Agendamentos' });
-Agendamento.belongsTo(Vacina, { foreignKey: 'vacinaId', as: 'Vacina' });
+agendamento.belongsTo(Vacina, { foreignKey: 'vacinaId', as: 'Vacina' });
+vacina.hasMany(Agendamento, { foreignKey: 'vacinaId', as: 'Agendamentos' });
+
 //
 const port = 3000;
 
@@ -276,8 +277,7 @@ app.get('/agendamentos', async (req, res) => {
         let agendamentos = await Agendamento.findAll({
             include: [
                 {model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]},
-                {model: Funcionario, as: 'Funcionario'},
-                {model: Vacina, as: 'Vacina'}
+                {model: Funcionario, as: 'Funcionario'}
             ]
         });
         agendamentos = agendamentos.map(ag => {
@@ -341,8 +341,7 @@ app.get('/agendamentos/:id', async (req, res) => {
         let agendamento = await Agendamento.findByPk(req.params.id, {
             include: [
                 {model: Animal, as: 'Animal', include: [{model: Tutor, as: 'Tutor'}]},
-                {model: Funcionario, as: 'Funcionario'},
-                {model: Vacina, as: 'Vacina'}
+                {model: Funcionario, as: 'Funcionario'}
             ]
         });
         let agData = agendamento.get({ plain: true });
@@ -806,19 +805,26 @@ app.get('/vacinas', async (req, res) => {
 
 
 app.get('/vacinas/cadastrar', async (req, res) => {
-    res.render('cadastrarVacinas');
+    try {
+        let animais = await Animal.findAll();
+        let funcionarios = await Funcionario.findAll();
+        res.render('cadastrarVacinas', { animais: animais.map(a => a.dataValues), funcionarios: funcionarios.map(f => f.dataValues) });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao carregar dados');
+    }
 });
 
 app.post('/vacinas/cadastrar', async (req, res) => {
     try {
-        let { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
+        let { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose, descricao } = req.body;
         await Vacina.create({
-            animalId:
-            animal.nome.body,
+            animalId,
             funcionarioId: funcionarioId || null,
             tipoVacina,
             dataAplicacao,
-            proximaDose
+            proximaDose: proximaDose || null,
+            descricao: descricao || null
         });
         res.redirect('/vacinas');
     } catch (error) {
@@ -840,18 +846,18 @@ app.get('/vacinas/editar/:id', async (req, res) => {
 });
 
 app.post('/vacinas/editar/:id', async (req, res) => {
-    const { nome, tipo, descricao, dataAplicacao } = req.body;
+    const { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose, descricao } = req.body;
     try {
         await Vacina.update({
-        animalId,
-        funcionarioId: funcionarioId || null,
-        tipoVacina,
-        dataAplicacao,
-        proximaDose
-    }, {
-        where: { id: req.params.id }
-    });
-
+            animalId,
+            funcionarioId: funcionarioId || null,
+            tipoVacina,
+            dataAplicacao,
+            proximaDose: proximaDose || null,
+            descricao: descricao || null
+        }, {
+            where: { id: req.params.id }
+        });
         res.redirect('/vacinas');
     } catch (error) {
         console.log(error);
