@@ -8,8 +8,8 @@ const Agendamento = require('./models/agendamento.model');
 const Funcionario = require('./models/funcionario.model');
 const Produto = require('./models/produto.model');
 const Servico = require('./models/servico.model');
-const db = require('./config/database');
 const Vacina = require('./models/vacina.model');
+const db = require('./config/database');
 
 Tutor.hasMany(Animal, { foreignKey: 'tutorId', as: 'Animais' });
 Animal.belongsTo(Tutor, { foreignKey: 'tutorId', as: 'Tutor' });
@@ -28,6 +28,9 @@ Servico.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' 
 
 Produto.hasMany(Servico, { foreignKey: 'produtoId', as: 'Servicos' });
 Servico.belongsTo(Produto, { foreignKey: 'produtoId', as: 'Produto' });
+
+Vacina.hasMany(Agendamento, { foreignKey: 'vacinaId', as: 'Agendamentos' });
+Agendamento.belongsTo(Vacina, { foreignKey: 'vacinaId', as: 'Vacina' });
 //
 const port = 3000;
 
@@ -303,9 +306,9 @@ app.get('/agendamentos/novo', async (req, res) => {
         let animais = await Animal.findAll();
         let funcionarios = await Funcionario.findAll();
         let vacinas = await Vacina.findAll();
-        vacinas = vacinas.map(v => v.dataValues);
         animais = animais.map(a => a.dataValues);
         funcionarios = funcionarios.map(f => f.dataValues);
+        vacinas = vacinas.map(v => v.dataValues);
         res.render('cadastrarAgendamento', {animais: animais, funcionarios: funcionarios, vacinas: vacinas});
     } catch (error) {
         console.log(error);
@@ -319,7 +322,8 @@ app.post('/agendamentos', async (req, res) => {
         await Agendamento.create({
             animalId: parseInt(req.body.animalId),
             funcionarioId: req.body.funcionarioId ? parseInt(req.body.funcionarioId) : null,
-            vacinaId: parseInt(req.body.vacinaId),
+            tipoVacina: req.body.tipoVacina,
+            vacinaId: req.body.vacinaId ? parseInt(req.body.vacinaId) : null,
             data: req.body.data,
             horario: req.body.horario,
             status: req.body.status
@@ -388,7 +392,8 @@ app.post('/agendamentos/:id', async (req, res) => {
             await agendamento.update({
                 animalId: parseInt(req.body.animalId),
                 funcionarioId: req.body.funcionarioId ? parseInt(req.body.funcionarioId) : null,
-                vacinaId: parseInt(req.body.vacinaId),
+                tipoVacina: req.body.tipoVacina,
+                vacinaId: req.body.vacinaId ? parseInt(req.body.vacinaId) : null,
                 data: req.body.data,
                 horario: req.body.horario,
                 status: req.body.status
@@ -790,16 +795,25 @@ app.post('/funcionarios/:id/excluir', async (req, res) => {
 
 app.get('/vacinas', async (req, res) => {
     try {
-        const vacinas = await Vacina.findAll({
-            include: ['animal', 'funcionario']
-        });
+        let vacinas = await Vacina.findAll();
+        vacinas = vacinas.map(v => v.dataValues);
         res.render('listarVacinas', { vacinas });
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao buscar vacinas');
     }
 });
-
+//listar funcionários
+app.get('/funcionarios', async (req, res) => {
+    try {
+        let funcionarios = await Funcionario.findAll();
+        funcionarios = funcionarios.map(funcionario => funcionario.dataValues);
+        res.render('listarFuncionarios', {funcionarios});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar funcionários');
+    }
+});
 app.get('/vacinas/cadastrar', async (req, res) => {
     try {
         const animais = await Animal.findAll();
@@ -884,16 +898,6 @@ app.get('/vacinas/deletar/:id', async (req, res) => {
         console.log(error);
         res.status(500).send('Erro ao deletar vacina');
     }
-});
-
-const hbs = require("hbs");
-
-hbs.registerHelper("ifEq", function(a, b, options) {
-    return (a == b) ? options.fn(this) : options.inverse(this);
-});
-
-hbs.registerHelper("ifCond", function(a, b, options) {
-    return (a == b) ? options.fn(this) : options.inverse(this);
 });
 
 app.listen(port, () => {
