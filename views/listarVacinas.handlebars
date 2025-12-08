@@ -7,62 +7,72 @@
 
     <style>
         body {
-            background-color: #d6edec;
             font-family: Arial, sans-serif;
-            text-align: center;
+            max-width: 1000px;
+            margin: 20px auto;
             padding: 20px;
         }
-
-        h1, h2 {
-            color: #476360;
+        h1 {
+            color: #2c3e50;
         }
-
-        table {
-            margin: 30px auto;
-            width: 80%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
+        .nav-links {
+            margin-bottom: 20px;
         }
-
-        th {
-            background-color: #476360;
-            color: white;
-            padding: 12px;
-            font-size: 17px;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .btn {
-            background-color: #476360;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
+        .nav-links a {
+            margin-right: 15px;
             text-decoration: none;
-            font-weight: bold;
-            margin: 3px;
+            color: #3498db;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .btn-new {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
             display: inline-block;
+            margin-bottom: 20px;
         }
-
-        .btn:hover {
-            opacity: 0.8;
-        }
-
-        .top-buttons {
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
+            background-color: white;
         }
-
-        .top-buttons a {
-            margin: 0 10px;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+        .btn-view {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-edit {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -70,12 +80,11 @@
 <body>
 
     <h1>Vacinas</h1>
-    <h2>Lista de vacinas cadastradas</h2>
-
-    <div class="top-buttons">
-        <a href="/vacinas/cadastrar" class="btn">Cadastrar nova vacina</a>
-        <a href="/vacinas/home" class="btn">Voltar</a>
+     <div class="nav-links">
+        <a href="/">Voltar</a>
     </div>
+    
+<a href="/vacinas/cadastrar" class="btn-new">Cadastrar nova vacina</a>
 
     <table>
         <thead>

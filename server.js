@@ -803,32 +803,15 @@ app.get('/vacinas', async (req, res) => {
         res.status(500).send('Erro ao buscar vacinas');
     }
 });
-//listar funcionários
-app.get('/funcionarios', async (req, res) => {
-    try {
-        let funcionarios = await Funcionario.findAll();
-        funcionarios = funcionarios.map(funcionario => funcionario.dataValues);
-        res.render('listarFuncionarios', {funcionarios});
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao buscar funcionários');
-    }
-});
+
+
 app.get('/vacinas/cadastrar', async (req, res) => {
-    try {
-        const animais = await Animal.findAll();
-        const funcionarios = await Funcionario.findAll();
-        res.render('cadastrarVacina', { animais, funcionarios });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao buscar animais e funcionários');
-    }
+    res.render('cadastrarVacinas');
 });
 
 app.post('/vacinas/cadastrar', async (req, res) => {
-    const { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
-
     try {
+        let { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
         await Vacina.create({
             animalId,
             funcionarioId: funcionarioId || null,
@@ -843,33 +826,20 @@ app.post('/vacinas/cadastrar', async (req, res) => {
     }
 });
 
-app.get('/vacinas/:id', async (req, res) => {
+app.get('/vacinas/editar/:id', async (req, res) => {
     try {
-        const vacina = await Vacina.findByPk(req.params.id, {
-            include: ['animal', 'funcionario']
-        });
-        res.render('detalharVacina', { vacina });
+        let vacina = await Vacina.findByPk(req.params.id);
+        let animais = await Animal.findAll();
+        let funcionarios = await Funcionario.findAll();
+        res.render('editarVacina', { vacina, animais, funcionarios });
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao buscar vacina');
     }
 });
 
-app.get('/vacinas/editar/:id', async (req, res) => {
-    try {
-        const vacina = await Vacina.findByPk(req.params.id);
-        const animais = await Animal.findAll();
-        const funcionarios = await Funcionario.findAll();
-        res.render('editarVacina', { vacina, animais, funcionarios });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao buscar vacina, animais e funcionários');
-    }
-});
-
 app.post('/vacinas/editar/:id', async (req, res) => {
-    const { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
-
+    const { nome, tipo, descricao, dataAplicacao } = req.body;
     try {
         await Vacina.update({
         animalId,
@@ -891,12 +861,24 @@ app.post('/vacinas/editar/:id', async (req, res) => {
 app.get('/vacinas/deletar/:id', async (req, res) => {
     try {
         await Vacina.destroy({
-        where: { id: req.params.id }
+            where: { id: req.params.id }
         });
         res.redirect('/vacinas');
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao deletar vacina');
+    }
+});
+
+app.get('/vacinas/:id', async (req, res) => {
+    try {
+        let vacina = await Vacina.findByPk(req.params.id);
+        if(!vacina)
+            return res.status(404).send('Vacina não encontrada');
+        res.render('detalharVacinas', { vacina: vacina.dataValues });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar vacina');
     }
 });
 
