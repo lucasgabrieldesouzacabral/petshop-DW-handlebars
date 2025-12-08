@@ -786,59 +786,78 @@ app.post('/funcionarios/:id/excluir', async (req, res) => {
     }
 });
 
+//rotas vacinas novo cruasd
+
 app.get('/vacinas', async (req, res) => {
-    const vacinas = await Vacina.findAll({
-        include: ['animal', 'funcionario']
-    });
-    res.render('listarVacinas', { vacinas });
+    try {
+        const vacinas = await Vacina.findAll({
+            include: ['animal', 'funcionario']
+        });
+        res.render('listarVacinas', { vacinas });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar vacinas');
+    }
 });
 
 app.get('/vacinas/cadastrar', async (req, res) => {
-    const animais = await Animal.findAll();
-    const funcionarios = await Funcionario.findAll();
-    res.render('cadastrarVacina', { animais, funcionarios });
+    try {
+        const animais = await Animal.findAll();
+        const funcionarios = await Funcionario.findAll();
+        res.render('cadastrarVacina', { animais, funcionarios });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar animais e funcionários');
+    }
 });
 
 app.post('/vacinas/cadastrar', async (req, res) => {
     const { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
 
-    await Vacina.create({
-        animalId,
-        funcionarioId: funcionarioId || null,
-        tipoVacina,
-        dataAplicacao,
-        proximaDose
-    });
-
-    res.redirect('/vacinas');
+    try {
+        await Vacina.create({
+            animalId,
+            funcionarioId: funcionarioId || null,
+            tipoVacina,
+            dataAplicacao,
+            proximaDose
+        });
+        res.redirect('/vacinas');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao cadastrar vacina');
+    }
 });
 
 app.get('/vacinas/:id', async (req, res) => {
-    const vacina = await Vacina.findByPk(req.params.id, {
-        include: ['animal', 'funcionario']
-    });
-    res.render('detalharVacina', { vacina });
+    try {
+        const vacina = await Vacina.findByPk(req.params.id, {
+            include: ['animal', 'funcionario']
+        });
+        res.render('detalharVacina', { vacina });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar vacina');
+    }
 });
 
 app.get('/vacinas/editar/:id', async (req, res) => {
-    const vacina = await Vacina.findByPk(req.params.id);
-    const animais = await Animal.findAll();
-    const funcionarios = await Funcionario.findAll();
-    res.render('editarVacina', { vacina, animais, funcionarios });
-});
-
-app.get("/vacinas/detalhar/:id", async (req, res) => {
-    const id = req.params.id;
-
-    const vacina = await db.getVacinaById(id);
-
-    res.render("vacinas/detalharVacina", { vacina });
+    try {
+        const vacina = await Vacina.findByPk(req.params.id);
+        const animais = await Animal.findAll();
+        const funcionarios = await Funcionario.findAll();
+        res.render('editarVacina', { vacina, animais, funcionarios });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao buscar vacina, animais e funcionários');
+    }
 });
 
 app.post('/vacinas/editar/:id', async (req, res) => {
     const { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
 
-    await Vacina.update({
+    try {
+        await Vacina.update({
         animalId,
         funcionarioId: funcionarioId || null,
         tipoVacina,
@@ -848,15 +867,23 @@ app.post('/vacinas/editar/:id', async (req, res) => {
         where: { id: req.params.id }
     });
 
-    res.redirect('/vacinas');
+        res.redirect('/vacinas');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao atualizar vacina');
+    }
 });
 
 app.get('/vacinas/deletar/:id', async (req, res) => {
-    await Vacina.destroy({
+    try {
+        await Vacina.destroy({
         where: { id: req.params.id }
-    });
-
-    res.redirect('/vacinas');
+        });
+        res.redirect('/vacinas');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Erro ao deletar vacina');
+    }
 });
 
 const hbs = require("hbs");
