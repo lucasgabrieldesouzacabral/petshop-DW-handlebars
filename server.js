@@ -813,7 +813,8 @@ app.post('/vacinas/cadastrar', async (req, res) => {
     try {
         let { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose } = req.body;
         await Vacina.create({
-            animalId,
+            animalId:
+            animal.nome.body,
             funcionarioId: funcionarioId || null,
             tipoVacina,
             dataAplicacao,
