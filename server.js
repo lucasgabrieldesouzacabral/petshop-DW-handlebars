@@ -29,8 +29,8 @@ Servico.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' 
 Produto.hasMany(Servico, { foreignKey: 'produtoId', as: 'Servicos' });
 Servico.belongsTo(Produto, { foreignKey: 'produtoId', as: 'Produto' });
 
-agendamento.belongsTo(Vacina, { foreignKey: 'vacinaId', as: 'Vacina' });
-vacina.hasMany(Agendamento, { foreignKey: 'vacinaId', as: 'Agendamentos' });
+Agendamento.belongsTo(Vacina, { foreignKey: 'vacinaId', as: 'Vacina' });
+Vacina.hasMany(Agendamento, { foreignKey: 'vacinaId', as: 'Agendamentos' });
 
 //
 const port = 3000;
