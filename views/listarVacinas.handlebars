@@ -77,47 +77,53 @@
     </style>
 </head>
 
-<body>
+    <body>
 
-    <h1>Vacinas</h1>
-     <div class="nav-links">
-        <a href="/">Voltar</a>
-    </div>
-    
-<a href="/vacinas/cadastrar" class="btn-new">Cadastrar nova vacina</a>
+        <h1>Listar Vacinas Aplicadas</h1>
+        <div class="nav-links">
+            <a href="/">🏠 Início</a>
+        </div>
+        <a href="/vacinas/novo" class="btn-new">Registrar Nova Vacina</a>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Animal</th>
-                <th>Nome da Vacina</th>
-                <th>Data da Aplicação</th>
-                <th>Dose</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Animal</th>
+                    <th>Vacina</th>
+                    <th>Data Aplicação</th>
+                    <th>Próxima Dose</th>
+                    <th>Aplicador</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
 
-        <tbody>
-            {{#each vacinas}}
-            <tr>
-                <td>{{id}}</td>
-                <td>{{animal_nome}}</td>
-                <td>{{nomeVacina}}</td>
-                <td>{{dataAplicacao}}</td>
-                <td>{{dose}}</td>
-                <td>{{status}}</td>
+            <tbody>
+                {{#each vacinas}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{animalNome}}</td>
+                    <td>{{tipoVacina}}</td>
+                    <td>{{dataAplicacao}}</td>
+                    <td>{{proximaDose}}</td>
+                    <td>{{funcionarioNome}}</td>
+                    <td>
+                        <a href="/vacinas/{{id}}" class="btn btn-view">Ver</a>
+                        <a href="/vacinas/{{id}}/editar" class="btn btn-edit">Editar</a>
+                        <form action="/vacinas/{{id}}/excluir" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-delete"
+                                onclick="return confirm('Tem certeza que deseja excluir este registro de vacina?')">Excluir</button>
+                            
+                        </form>
+                        
+                    </td>
+                   
+                </tr>
+                 {{/each}}
+               
+            </tbody>
+        
+        </table>
 
-                <td>
-                    <a href="/vacinas/ver/{{id}}" class="btn">Ver</a>
-                    <a href="/vacinas/editar/{{id}}" class="btn">Editar</a>
-                    <a href="/vacinas/excluir/{{id}}" class="btn">Excluir</a>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-
-</body>
+    </body>
 </html>
