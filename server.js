@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
+
 const Tutor = require('./models/tutor.model');
 const Animal = require('./models/animal.model');
 const Agendamento = require('./models/agendamento.model');
@@ -20,17 +21,27 @@ Agendamento.belongsTo(Animal, { foreignKey: 'animalId', as: 'Animal' });
 Funcionario.hasMany(Agendamento, { foreignKey: 'funcionarioId', as: 'Agendamentos' });
 Agendamento.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' });
 
-Animal.hasMany(Servico, { foreignKey: 'animalId', as: 'Servicos' });
+Vacina.belongsTo(Animal,{ foreignKey: 'animalId', as: 'animal'});
+
+Animal.hasMany(Vacina, { foreignKey: 'Vacinas'});
+
+Vacina.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario'});
+
+Funcionario.hasMany(Vacina, {foreignKey: "funcionarioId", as: 'Vacinas'});
+
+Animal.hasMany(servico, {foreignKey: 'animalId', as: 'servicos'})
+
+
 Servico.belongsTo(Animal, { foreignKey: 'animalId', as: 'Animal' });
 
 Funcionario.hasMany(Servico, { foreignKey: 'funcionarioId', as: 'Servicos' });
+
 Servico.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' });
 
 Produto.hasMany(Servico, { foreignKey: 'produtoId', as: 'Servicos' });
+
 Servico.belongsTo(Produto, { foreignKey: 'produtoId', as: 'Produto' });
 
-Agendamento.belongsTo(Vacina, { foreignKey: 'vacinaId', as: 'Vacina' });
-Vacina.hasMany(Agendamento, { foreignKey: 'vacinaId', as: 'Agendamentos' });
 
 //
 const port = 3000;
