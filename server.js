@@ -9,7 +9,6 @@ const Agendamento = require('./models/agendamento.model');
 const Funcionario = require('./models/funcionario.model');
 const Produto = require('./models/produto.model');
 const Servico = require('./models/servico.model');
-const Vacina = require('./models/vacina.model');
 const db = require('./config/database');
 
 Tutor.hasMany(Animal, { foreignKey: 'tutorId', as: 'Animais' });
@@ -20,14 +19,6 @@ Agendamento.belongsTo(Animal, { foreignKey: 'animalId', as: 'Animal' });
 
 Funcionario.hasMany(Agendamento, { foreignKey: 'funcionarioId', as: 'Agendamentos' });
 Agendamento.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' });
-
-Vacina.belongsTo(Animal,{ foreignKey: 'animalId', as: 'animal'});
-
-Animal.hasMany(Vacina, { foreignKey: 'Vacinas'});
-
-Vacina.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario'});
-
-Funcionario.hasMany(Vacina, {foreignKey: "funcionarioId", as: 'Vacinas'});
 
 Animal.hasMany(servico, {foreignKey: 'animalId', as: 'servicos'})
 
@@ -50,7 +41,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.engine('handlebars', exphbs.engine({
-    defaultLayout: false, 
+    defaultLayout: false,
     helpers: {
         eq: (a, b) => a === b
     }}));
@@ -202,7 +193,7 @@ app.get('/animais/novo', async (req, res) => {
 app.post('/animais', async (req, res) => {
     try {
         await Animal.create({nome: req.body.nome, especie: req.body.especie, raca: req.body.raca,
-             idade: parseInt(req.body.idade), tutorId: parseInt(req.body.tutorId)});
+            idade: parseInt(req.body.idade), tutorId: parseInt(req.body.tutorId)});
         res.redirect('/animais');
     } catch (error) {
         console.log(error);
@@ -435,9 +426,8 @@ app.post('/agendamentos/:id/excluir', async (req, res) => {
 
 
 
-// novox 3 CRUD
+// novox 3 CRUD: produto, primeiro novo crud
 
-//listar produtos
 app.get('/produtos', async (req, res) => {
     try {
         let produtos = await Produto.findAll();
@@ -449,7 +439,6 @@ app.get('/produtos', async (req, res) => {
     }
 });
 
-// Página novo produto
 
 app.get('/produtos/novo', (req, res) => {
     res.render('cadastrarProduto');
@@ -471,7 +460,6 @@ app.post('/produtos', async (req, res) => {
     }
 });
 
-//detalhar produto
 app.get('/produtos/:id', async (req, res) => {
     try {
         let produto = await Produto.findByPk(req.params.id);
@@ -486,7 +474,6 @@ app.get('/produtos/:id', async (req, res) => {
     }
 });
 
-//editar produto
 app.get('/produtos/:id/editar', async (req, res) => {
     try {
         let produto = await Produto.findByPk(req.params.id);
@@ -499,7 +486,6 @@ app.get('/produtos/:id/editar', async (req, res) => {
     }
 });
 
-//atualizar produto
 app.post('/produtos/:id', async (req, res) => {
     try {
         let produto = await Produto.findByPk(req.params.id);
@@ -521,7 +507,6 @@ app.post('/produtos/:id', async (req, res) => {
     }
 });
 
-//excluir produto
 app.post('/produtos/:id/excluir', async (req, res) => {
     try {
         let produto = await Produto.findByPk(req.params.id);
@@ -537,7 +522,7 @@ app.post('/produtos/:id/excluir', async (req, res) => {
     }
 });
 
-// CRUD SERVIÇOS
+// CRUD SERVIÇOS segundo novo crud
 //listar serviços
 app.get('/servicos', async (req, res) => {
     try {
@@ -567,7 +552,6 @@ app.get('/servicos', async (req, res) => {
     }
 });
 
-//formulário de cadastro de serviço
 app.get('/servicos/novo', async (req, res) => {
     try {
         let animais = await Animal.findAll();
@@ -587,7 +571,6 @@ app.get('/servicos/novo', async (req, res) => {
     }
 });
 
-//cadastrar serviço
 app.post('/servicos', async (req, res) => {
     try {
         await Servico.create({
@@ -607,7 +590,6 @@ app.post('/servicos', async (req, res) => {
     }
 });
 
-//detalhar serviço
 app.get('/servicos/:id', async (req, res) => {
     try {
         let servico = await Servico.findByPk(req.params.id, {
@@ -637,7 +619,6 @@ app.get('/servicos/:id', async (req, res) => {
     }
 });
 
-//editar serviço
 app.get('/servicos/:id/editar', async (req, res) => {
     try {
         let servico = await Servico.findByPk(req.params.id);
@@ -661,7 +642,6 @@ app.get('/servicos/:id/editar', async (req, res) => {
     }
 });
 
-//atualizar serviço
 app.post('/servicos/:id', async (req, res) => {
     try {
         let servico = await Servico.findByPk(req.params.id);
@@ -686,7 +666,6 @@ app.post('/servicos/:id', async (req, res) => {
     }
 });
 
-//excluir serviço
 app.post('/servicos/:id/excluir', async (req, res) => {
     try {
         let servico = await Servico.findByPk(req.params.id);
@@ -701,9 +680,8 @@ app.post('/servicos/:id/excluir', async (req, res) => {
         res.status(500).send('Erro ao excluir serviço');
     }
 });
-// CRUD FUNCIONÁRIOS
+// CRUD FUNCIONÁRIOS terceiro novo crud
 
-//listar funcionários
 app.get('/funcionarios', async (req, res) => {
     try {
         let funcionarios = await Funcionario.findAll();
@@ -715,12 +693,10 @@ app.get('/funcionarios', async (req, res) => {
     }
 });
 
-// Novo funcionário
 app.get('/funcionarios/novo', (req, res) => {
     res.render('cadastrarFuncionario');
 });
 
-//cadastrar funcionário
 app.post('/funcionarios', async (req, res) => {
     try {
         await Funcionario.create({
@@ -736,7 +712,6 @@ app.post('/funcionarios', async (req, res) => {
     }
 });
 
-//detalhar funcionário
 app.get('/funcionarios/:id', async (req, res) => {
     try {
         let funcionario = await Funcionario.findByPk(req.params.id);
@@ -751,7 +726,6 @@ app.get('/funcionarios/:id', async (req, res) => {
     }
 });
 
-//editar funcionário
 app.get('/funcionarios/:id/editar', async (req, res) => {
     try {
         let funcionario = await Funcionario.findByPk(req.params.id);
@@ -764,7 +738,6 @@ app.get('/funcionarios/:id/editar', async (req, res) => {
     }
 });
 
-//atualizar funcionário
 app.post('/funcionarios/:id', async (req, res) => {
     try {
         let funcionario = await Funcionario.findByPk(req.params.id);
@@ -785,7 +758,6 @@ app.post('/funcionarios/:id', async (req, res) => {
     }
 });
 
-//excluir funcionário
 app.post('/funcionarios/:id/excluir', async (req, res) => {
     try {
         let funcionario = await Funcionario.findByPk(req.params.id);
@@ -801,104 +773,7 @@ app.post('/funcionarios/:id/excluir', async (req, res) => {
     }
 });
 
-//rotas vacinas novo cruasd
 
-app.get('/vacinas', async (req, res) => {
-    try {
-        let vacinas = await Vacina.findAll();
-        vacinas = vacinas.map(v => v.dataValues);
-        res.render('listarVacinas', { vacinas });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao buscar vacinas');
-    }
-});
-
-
-app.get('/vacinas/cadastrar', async (req, res) => {
-    try {
-        let animais = await Animal.findAll();
-        let funcionarios = await Funcionario.findAll();
-        res.render('cadastrarVacinas', { animais: animais.map(a => a.dataValues), funcionarios: funcionarios.map(f => f.dataValues) });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao carregar dados');
-    }
-});
-
-app.post('/vacinas/cadastrar', async (req, res) => {
-    try {
-        let { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose, descricao } = req.body;
-        await Vacina.create({
-            animalId,
-            funcionarioId: funcionarioId || null,
-            tipoVacina,
-            dataAplicacao,
-            proximaDose: proximaDose || null,
-            descricao: descricao || null
-        });
-        res.redirect('/vacinas');
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao cadastrar vacina');
-    }
-});
-
-app.get('/vacinas/editar/:id', async (req, res) => {
-    try {
-        let vacina = await Vacina.findByPk(req.params.id);
-        let animais = await Animal.findAll();
-        let funcionarios = await Funcionario.findAll();
-        res.render('editarVacina', { vacina, animais, funcionarios });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao buscar vacina');
-    }
-});
-
-app.post('/vacinas/editar/:id', async (req, res) => {
-    const { animalId, funcionarioId, tipoVacina, dataAplicacao, proximaDose, descricao } = req.body;
-    try {
-        await Vacina.update({
-            animalId,
-            funcionarioId: funcionarioId || null,
-            tipoVacina,
-            dataAplicacao,
-            proximaDose: proximaDose || null,
-            descricao: descricao || null
-        }, {
-            where: { id: req.params.id }
-        });
-        res.redirect('/vacinas');
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao atualizar vacina');
-    }
-});
-
-app.get('/vacinas/deletar/:id', async (req, res) => {
-    try {
-        await Vacina.destroy({
-            where: { id: req.params.id }
-        });
-        res.redirect('/vacinas');
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao deletar vacina');
-    }
-});
-
-app.get('/vacinas/:id', async (req, res) => {
-    try {
-        let vacina = await Vacina.findByPk(req.params.id);
-        if(!vacina)
-            return res.status(404).send('Vacina não encontrada');
-        res.render('detalharVacinas', { vacina: vacina.dataValues });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Erro ao buscar vacina');
-    }
-});
 
 app.listen(port, () => {
     console.log(`Servidor em execução: http://localhost:${port}`);

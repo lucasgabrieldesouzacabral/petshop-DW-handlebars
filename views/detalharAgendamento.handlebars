@@ -101,50 +101,33 @@
             <span class="detail-label">ID:</span>
             <span class="detail-value">{{agendamento.id}}</span>
         </div>
-
         <div class="detail-item">
             <span class="detail-label">Animal:</span>
-            <span class="detail-value">
-                {{agendamento.Animal.nome}} ({{agendamento.Animal.especie}})
-            </span>
+            <span class="detail-value">{{agendamento.animal.nome}} ({{agendamento.animal.especie}})</span>
         </div>
-
         <div class="detail-item">
             <span class="detail-label">Tutor:</span>
-            <span class="detail-value">
-                {{agendamento.Animal.Tutor.nome}}
-            </span>
+            <span class="detail-value">{{agendamento.tutor.nome}}</span>
         </div>
-
         <div class="detail-item">
             <span class="detail-label">Funcionário:</span>
-            <span class="detail-value">
-                {{agendamento.Funcionario.nome}} ({{agendamento.Funcionario.cargo}})
-            </span>
+            <span class="detail-value">{{agendamento.funcionario.nome}} ({{agendamento.funcionario.cargo}})</span>
         </div>
-
         <div class="detail-item">
-            <span class="detail-label">Vacina:</span>
-            <span class="detail-value">
-                {{agendamento.Vacina.nome}} — {{agendamento.Vacina.tipo}}
-            </span>
+            <span class="detail-label">Tipo de Vacina:</span>
+            <span class="detail-value">{{agendamento.tipoVacina}}</span>
         </div>
-
         <div class="detail-item">
             <span class="detail-label">Data:</span>
             <span class="detail-value">{{agendamento.data}}</span>
         </div>
-
         <div class="detail-item">
             <span class="detail-label">Horário:</span>
             <span class="detail-value">{{agendamento.horario}}</span>
         </div>
-
         <div class="detail-item">
             <span class="detail-label">Status:</span>
-            <span class="detail-value">
-                <span class="status-badge {{agendamento.status}}">{{agendamento.status}}</span>
-            </span>
+            <span class="detail-value"><span class="status-badge {{agendamento.status}}">{{agendamento.status}}</span></span>
         </div>
     </div>
     
