@@ -20,7 +20,7 @@ Agendamento.belongsTo(Animal, { foreignKey: 'animalId', as: 'Animal' });
 Funcionario.hasMany(Agendamento, { foreignKey: 'funcionarioId', as: 'Agendamentos' });
 Agendamento.belongsTo(Funcionario, { foreignKey: 'funcionarioId', as: 'Funcionario' });
 
-Animal.hasMany(servico, {foreignKey: 'animalId', as: 'servicos'})
+Animal.hasMany(Servico, {foreignKey: 'animalId', as: 'servicos'})
 
 
 Servico.belongsTo(Animal, { foreignKey: 'animalId', as: 'Animal' });
