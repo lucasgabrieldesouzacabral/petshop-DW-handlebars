@@ -307,11 +307,9 @@ app.get('/agendamentos/novo', async (req, res) => {
     try {
         let animais = await Animal.findAll();
         let funcionarios = await Funcionario.findAll();
-        let vacinas = await Vacina.findAll();
         animais = animais.map(a => a.dataValues);
         funcionarios = funcionarios.map(f => f.dataValues);
-        vacinas = vacinas.map(v => v.dataValues);
-        res.render('cadastrarAgendamento', {animais: animais, funcionarios: funcionarios, vacinas: vacinas});
+        res.render('cadastrarAgendamento', {animais: animais, funcionarios: funcionarios});
     } catch (error) {
         console.log(error);
         res.status(500).send('Erro ao buscar animais');
@@ -367,17 +365,14 @@ app.get('/agendamentos/:id/editar', async (req, res) => {
         let agendamento = await Agendamento.findByPk(req.params.id);
         let animais = await Animal.findAll();
         let funcionarios = await Funcionario.findAll();
-        let vacinas = await Vacina.findAll();
         if(!agendamento)
             return res.status(404).send('Agendamento não encontrado.');
         let animaisData = animais.map(a => a.dataValues);
         let funcionariosData = funcionarios.map(f => f.dataValues);
-        let vacinasData = vacinas.map(v => v.dataValues);
         res.render('editarAgendamento', {
             agendamento: agendamento.dataValues,
             animais: animaisData,
-            funcionarios: funcionariosData,
-            vacinas: vacinasData
+            funcionarios: funcionariosData
         });
     } catch (error) {
         console.log(error);
